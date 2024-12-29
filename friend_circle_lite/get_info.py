@@ -76,6 +76,7 @@ def check_feed(blog_url, session):
         ('atom', '/atom.xml'),
         ('rss', '/rss.xml'), # 2024-07-26 添加 /rss.xml内容的支持
         ('rss2', '/rss2.xml'),
+        ('rss3', '/rss.php'), # 2024-12-07 添加 /rss.php内容的支持
         ('feed', '/feed'),
         ('feed2', '/feed.xml'), # 2024-07-26 添加 /feed.xml内容的支持
         ('feed3', '/feed/'),
@@ -111,7 +112,7 @@ def parse_feed(url, session, count=5, blog_url=''):
     """
     try:
         response = session.get(url, headers=headers, timeout=timeout)
-        response.encoding = 'utf-8'
+        response.encoding = response.apparent_encoding or 'utf-8'
         feed = feedparser.parse(response.text)
         
         result = {
