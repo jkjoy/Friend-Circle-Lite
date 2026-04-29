@@ -17,6 +17,12 @@ function initialize_fc_lite() {
 
     const randomArticleContainer = document.createElement('div');
     randomArticleContainer.id = 'random-article';
+    randomArticleContainer.innerHTML = `
+        <div class="loading-placeholder">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">加载中...</div>
+        </div>
+    `;
     root.appendChild(randomArticleContainer);
 
     const container = document.createElement('div');
@@ -29,7 +35,6 @@ function initialize_fc_lite() {
     loadMoreBtn.innerText = '再来亿点';
     root.appendChild(loadMoreBtn);
 
-    // 创建统计信息容器
     const statsContainer = document.createElement('div');
     statsContainer.id = 'stats-container';
     root.appendChild(statsContainer);
@@ -51,40 +56,68 @@ function initialize_fc_lite() {
             }
         }
 
+        // 设置10秒超时
+        const timeoutId = setTimeout(() => {
+            showError('加载超时，请刷新页面重试');
+        }, 10000);
+
         fetch(`${UserConfig.private_api_url}all.json`)
-            .then(response => response.json())
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error('网络响应错误');
+                }
+                return response.json();
+            })
             .then(data => {
                 localStorage.setItem(cacheKey, JSON.stringify(data));
                 localStorage.setItem(cacheTimeKey, now.toString());
                 processArticles(data);
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('加载失败:', error);
+                showError('加载失败，请检查网络连接');
             })
             .finally(() => {
                 loadMoreBtn.innerText = '再来亿点'; // 恢复按钮文本
             });
     }
 
+    function showError(message) {
+        randomArticleContainer.innerHTML = `
+            <div class="error-placeholder">
+                <div class="error-icon">⚠️</div>
+                <div class="error-text">${message}</div>
+                <button class="retry-button" onclick="location.reload()">重新加载</button>
+            </div>
+        `;
+    }
+
     function processArticles(data) {
         allArticles = data.article_data;
         // 处理统计数据
         const stats = data.statistical_data;
+        
         statsContainer.innerHTML = `
             <div>Powered by: <a href="https://github.com/willow-god/Friend-Circle-Lite" target="_blank">FriendCircleLite</a><br></div>
             <div>Designed By: <a href="https://www.liushen.fun/" target="_blank">LiuShen</a><br></div>
-            <div>订阅:${stats.friends_num}   活跃:${stats.active_num}   总文章数:${stats.article_num}<br></div>
             <div>更新时间:${stats.last_updated_time}</div>
         `;
 
-        displayRandomArticle(); // 显示随机友链卡片
+        displayRandomArticle(stats); // 显示随机友链卡片，传入统计数据
 
         const articles = allArticles.slice(start, start + UserConfig.page_turning_number);
 
-        articles.forEach(article => {
+        articles.forEach((article, index) => {
             const card = document.createElement('div');
             card.className = 'card';
+            card.style.animationDelay = `${index * 0.05}s`;
 
             const title = document.createElement('div');
             title.className = 'card-title';
             title.innerText = article.title;
+            title.title = article.title; // 添加完整标题的提示
             card.appendChild(title);
             title.onclick = () => window.open(article.link, '_blank');
 
@@ -92,8 +125,8 @@ function initialize_fc_lite() {
             author.className = 'card-author';
             const authorImg = document.createElement('img');
             authorImg.className = 'no-lightbox';
-            authorImg.src = article.avatar || UserConfig.error_img; // 使用默认头像
-            authorImg.onerror = () => authorImg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+            authorImg.src = article.avatar || UserConfig.error_img;
+            authorImg.onerror = () => authorImg.src = UserConfig.error_img;
             author.appendChild(authorImg);
             author.appendChild(document.createTextNode(article.author));
             card.appendChild(author);
@@ -110,7 +143,7 @@ function initialize_fc_lite() {
             const bgImg = document.createElement('img');
             bgImg.className = 'card-bg no-lightbox';
             bgImg.src = article.avatar || UserConfig.error_img;
-            bgImg.onerror = () => bgImg.src = UserConfig.error_img; // 头像加载失败时使用默认头像
+            bgImg.onerror = () => bgImg.src = UserConfig.error_img;
             card.appendChild(bgImg);
 
             container.appendChild(card);
@@ -124,25 +157,54 @@ function initialize_fc_lite() {
     }
 
     // 显示随机文章的逻辑
-    function displayRandomArticle() {
+    function displayRandomArticle(stats) {
         const randomArticle = allArticles[Math.floor(Math.random() * allArticles.length)];
         randomArticleContainer.innerHTML = `
-            <div class="random-container">
-                <div class="random-container-title">随机钓鱼</div>
-                <div class="random-title">${randomArticle.title}</div>
-                <div class="random-author">作者: ${randomArticle.author}</div>
+            <div class="random-top">
+                <div class="random-stats">
+                    <div class="stat-item">
+                        <div class="stat-num">${stats.friends_num}</div>
+                        <div class="stat-text">订阅</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">${stats.active_num}</div>
+                        <div class="stat-text">活跃</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">${stats.article_num}</div>
+                        <div class="stat-text">文章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">${stats.error_num}</div>
+                        <div class="stat-text">失败</div>
+                    </div>
+                </div>
             </div>
-            <div class="random-button-container">
-                <a href="#" id="refresh-random-article">刷新</a>
-                <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">过去转转</button>
+            <div class="random-content">
+                <div class="random-container">
+                    <div class="random-container-title">🎲 随便转转</div>
+                    <div class="random-title" title="${randomArticle.title}">${randomArticle.title}</div>
+                    <div class="random-meta">
+                        <span class="random-author">✍️ ${randomArticle.author}</span>
+                        <span class="random-date">📅 ${randomArticle.created.substring(0, 10)}</span>
+                    </div>
+                </div>
+                <div class="random-button-container">
+                    <a href="#" id="refresh-random-article">🔄 换一篇</a>
+                    <button class="random-link-button" onclick="window.open('${randomArticle.link}', '_blank')">阅读文章</button>
+                </div>
             </div>
         `;
 
         // 为刷新按钮添加事件监听器
         const refreshBtn = document.getElementById('refresh-random-article');
         refreshBtn.addEventListener('click', function (event) {
-            event.preventDefault(); // 阻止默认的跳转行为
-            displayRandomArticle(); // 调用显示随机文章的逻辑
+            event.preventDefault();
+            randomArticleContainer.style.opacity = '0.5';
+            setTimeout(() => {
+                displayRandomArticle(stats);
+                randomArticleContainer.style.opacity = '1';
+            }, 200);
         });
     }
 

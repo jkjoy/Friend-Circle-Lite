@@ -16,7 +16,7 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         background-position: center;
-        font-family: Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -32,21 +32,30 @@
         position: fixed;
         bottom: 20px;
         right: 20px;
-        width: 90px;
-        height: 30px;
-        background-color: #007BFF;
+        width: 100px;
+        height: 40px;
+        background: linear-gradient(135deg, #007BFF, #0056b3);
         color: white;
         border: none;
         border-radius: 20px;
-        font-size: 16px;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    #theme-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
     }
     .container {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         display: flex;
         text-align: center;
         align-items: center;
@@ -54,6 +63,7 @@
         width: 100%;
         flex-direction: column;
         justify-content: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     .root-container {
@@ -73,10 +83,26 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(0, 123, 255, 0.2);
+        transition: all 0.3s ease;
+        animation: float 3s ease-in-out infinite;
     }
+    
+    .avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.3);
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
     p {
         color: #666;
         margin-bottom: 30px;
+        font-size: 18px;
+        line-height: 1.6;
     }
     .button-container {
         margin-top: 20px;
@@ -88,17 +114,20 @@
         background-color: rgb(255, 255, 255);
         border: 2px solid #007BFF;
         color: #007BFF;
-        padding: 10px 20px;
+        padding: 12px 28px;
         border-radius: 25px;
         text-decoration: none;
         font-size: 16px;
-        font-weight: bold;
+        font-weight: 600;
         display: inline-block;
-        transition: background-color 0.3s, color 0.3s;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
     }
     .button:hover {
         background-color: #007BFF;
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
     }
 
     .card-author,
@@ -108,19 +137,27 @@
 
     .scroll-down-icon {
         position: absolute;
-        bottom: 20px;
+        bottom: 30px;
         height: 24px;
         color: #007BFF;
         animation: bounce 1.5s infinite;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
+    
+    .scroll-down-icon:hover {
+        transform: scale(1.1);
+        opacity: 1 !important;
+    }
+    
     .scroll-down-icon::before,
     .scroll-down-icon::after {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
         opacity: .8;
         border-left: 3px solid #007BFF;
         border-bottom: 3px solid #007BFF;
@@ -148,7 +185,9 @@
 }
 
 [data-theme="dark"] .container {
-    background: rgba(30, 30, 30, 0.8);
+    background: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 [data-theme="dark"] p {
@@ -166,8 +205,14 @@
     color: white;
 }
 
-[data-theme="dark"] .scroll-down-icon {
-    color: #007BFF;
+[data-theme="dark"] .scroll-down-icon::before,
+[data-theme="dark"] .scroll-down-icon::after {
+    border-left-color: #007BFF;
+    border-bottom-color: #007BFF;
+}
+
+[data-theme="dark"] .avatar {
+    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.3);
 }
 </style>
 
@@ -213,8 +258,8 @@
         button.textContent = newTheme === 'light' ? '暗色模式' : '亮色模式';
     });
 </script>
-<link rel="stylesheet" href="./main/fclite.css">
-<script src="./main/fclite.js"></script>
+<link rel="stylesheet" href="/main/fclite.css">
+<script src="/main/fclite.js"></script>
 </body>
 
 </html>

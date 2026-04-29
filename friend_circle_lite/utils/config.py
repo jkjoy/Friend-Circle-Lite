@@ -1,19 +1,18 @@
-import yaml
+"""Configuration loading utilities."""
+
+from __future__ import annotations
+
 import logging
 
-def load_config(config_file):
-    """
-    加载配置文件。
-    
-    参数：
-    config_file (str): 配置文件的路径。
-    
-    返回：
-    dict: 加载的配置数据。
-    """
+import yaml
+
+from friend_circle_lite.app_config import ApplicationConfig
+
+def load_raw_config(config_file: str) -> dict:
+    """Load the raw YAML config dictionary from disk."""
     try:
         with open(config_file, 'r', encoding='utf-8') as file:
-            return yaml.safe_load(file)
+            return yaml.safe_load(file) or {}
     except FileNotFoundError:
         logging.error(f"配置文件 {config_file} 未找到")
         return {}
@@ -23,3 +22,8 @@ def load_config(config_file):
     except Exception as e:
         logging.error(f"加载配置文件时发生未知错误: {str(e)}")
         return {}
+
+
+def load_config(config_file: str) -> ApplicationConfig:
+    """Load and validate the application configuration as typed objects."""
+    return ApplicationConfig.from_dict(load_raw_config(config_file))

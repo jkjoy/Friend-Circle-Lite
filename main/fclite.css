@@ -47,74 +47,254 @@
 
 #random-article {
     display: flex;
+    flex-direction: column;
+    gap: 16px;
     position: relative;
     width: 100%;
-    margin: 8px 0;
+    margin: 0 0 16px 0;
     background-color: var(--container-bg-color);
-    border-radius: 10px;
-    border:1px solid var(--border-color);
-    height: 210px;
-    transition: border 0.3s;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.random-top {
+    width: 100%;
+}
+
+.random-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 12px;
+    background-color: var(--background-color);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    border-color: var(--hover-color);
+}
+
+.stat-num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--hover-color);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-text {
+    font-size: 11px;
+    color: var(--author-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.random-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .random-container {
-    position: relative;
-    margin: 20px;
-    width: 90%;
-    height: 170px;
-}
-
-.random-container:hover .random-title {
-    font-size: 32px;
-}
-
-.random-author {
-    font-size: 14px;
-    color: var(--author-color);
-    margin-bottom: 10px;
+    flex: 1;
+    min-width: 0;
 }
 
 .random-container-title {
-    font-size: 20px;
+    font-size: 11px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .random-title {
-    margin-bottom: 10px;
-    font-size: 30px;
-    transition: font-size 0.3s ease-in-out;
-    white-space: nowrap;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+.random-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.random-author,
+.random-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--author-color);
+    transition: all 0.3s ease;
+}
+
+.random-author:hover,
+.random-date:hover {
+    border-color: var(--hover-color);
+}
+
 .random-button-container {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease-in-out;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .random-button-container a {
-    margin-right: 10px;
-    color: #aaaaaa !important;
+    padding: 8px 16px;
+    color: var(--text-color) !important;
     text-decoration: none !important;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--background-color);
+    transition: all 0.3s ease;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.random-button-container a:hover {
+    border-color: var(--hover-color);
+    color: var(--hover-color) !important;
 }
 
 .random-link-button {
-    padding: 10px 20px;
+    padding: 8px 20px;
     border: none;
-    border-radius: 20px;
+    border-radius: 6px;
     background-color: var(--hover-color);
     color: #fff;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.random-link-button:hover {
+    opacity: 0.9;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .random-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .random-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .random-container {
+        text-align: center;
+    }
+    
+    .random-meta {
+        justify-content: center;
+    }
+    
+    .random-button-container {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .random-stats {
+        gap: 8px;
+    }
+    
+    .stat-item {
+        padding: 10px 8px;
+    }
+    
+    .stat-num {
+        font-size: 20px;
+    }
+}
+
+/* 加载和错误状态样式 */
+.loading-placeholder,
+.error-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 12px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--hover-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
     font-size: 14px;
-    transition: background-color 0.3s ease-in-out;
+    color: var(--author-color);
+}
+
+.error-icon {
+    font-size: 48px;
+}
+
+.error-text {
+    font-size: 14px;
+    color: var(--author-color);
+    text-align: center;
+}
+
+.retry-button {
+    margin-top: 8px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--hover-color);
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.retry-button:hover {
+    opacity: 0.9;
 }
 
 .modal {
@@ -180,6 +360,7 @@
     height: 250px;
     right: -20px;
     bottom: -20px;
+    object-fit: cover;
     transition: transform 0.6s ease !important;
 }
 
@@ -189,6 +370,7 @@
     border-radius: 50% !important;
     width: 110px;
     height: 110px;
+    object-fit: cover;
 }
 
 #modal-author-name-link {
@@ -258,36 +440,50 @@
 .articles-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 8px;
+    gap: 10px;
     width: 100%;
 }
 
 .card {
     background-color: var(--container-bg-color);
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 12px;
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 150px;
-    transition: border 0.3s;
+    height: 120px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
 }
 
-.card:hover,
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card:hover {
+    border-color: var(--hover-color);
+    transform: translateY(-4px);
+}
+
 #random-article:hover {
-    border: 1px solid var(--hover-color);
+    border-color: var(--hover-color);
 }
 
 .card-title {
     z-index: 1;
-    font-size: 17px;
+    font-size: 16px;
     color: var(--text-color);
-    font-weight: 520;
+    font-weight: 600;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     line-height: 1.5;
     max-height: 4.5em;
     overflow: hidden;
@@ -296,36 +492,35 @@
     -webkit-line-clamp: 3;
     line-clamp: 3;
     -webkit-box-orient: vertical;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .card-title:hover {
     color: var(--hover-color);
-    text-decoration: underline;
 }
 
 .card-author,
 .card-date {
     font-size: 12px;
     color: var(--author-color);
-    padding: 5px;
+    padding: 4px 10px 4px 2px;
     line-height: 15px;
 }
 
 .card-author:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: var(--hover-color);
 }
 
 .card-author {
     cursor: pointer;
     background-color: var(--background-color);
     border: 1px solid var(--border-color);
-    border-radius: 15px;
+    border-radius: 12px;
     display: flex;
     padding-right: 10px;
     width: fit-content;
     align-items: center;
-    transition: box-shadow 0.2s;
+    transition: all 0.3s ease;
 }
 
 #friend-circle-lite-root .card-author img {
@@ -357,6 +552,7 @@
     width: 140px;
     height: 140px;
     opacity: 0.4;
+    object-fit: cover;
     transition: transform 0.6s ease, bottom 0.3s ease, right 0.3s ease;
 }
 
@@ -368,22 +564,26 @@
 
 #load-more-btn {
     color: var(--text-color);
-    font-size: 15px;
+    font-size: 13px;
+    font-weight: 500;
     background-color: var(--container-bg-color);
     cursor: pointer;
-    width: 200px;
-    border-radius: 10px;
+    width: 140px;
+    max-width: 100%;
+    border-radius: 20px;
     border: 1px solid var(--border-color);
-    padding: 3px;
-    transition: all 0.3s;
+    padding: 8px 24px;
+    transition: all 0.3s ease;
     margin: 20px auto;
     display: block;
 }
 
 #load-more-btn:hover {
     background-color: var(--hover-color);
-    width: 300px;
+    border-color: var(--hover-color);
     color: white;
+    width: 180px;
+    max-width: 100%;
 }
 
 #stats-container {
